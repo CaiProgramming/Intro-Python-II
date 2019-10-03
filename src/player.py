@@ -6,9 +6,14 @@ class Player:
         self.sex = sex;
         self.age = str(age);
         self.room = room;
+        self.items = [];
     def currentRoom(self):
         return self.room
     def changeRoom(self,room):
         self.room = room
+    def addItems(self,item):
+        self.items.append(item)
+    def playerItems(self):
+        return self.items
     def __str__(self):
         return 'Name: ' + self.name + ' Age: ' + self.age + ' Sex: ' + self.sex
