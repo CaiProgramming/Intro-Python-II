@@ -86,13 +86,14 @@ exit = 0;
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
-print('you\'re movement is W/A/S/D ',end='\n\n')
-print('W=North A=West S=South D=East',end='\n\n')
-print('"q", quit the game.',end='\n\n')
-print('"e", search room.',end='\n\n')
-print('"i", show inventory.',end='\n\n')
+
 
 while not exit:
+    print('you\'re movement is W/A/S/D ',end='\n\n')
+    print('W=North A=West S=South D=East',end='\n\n')
+    print('"q", quit the game.',end='\n\n')
+    print('"e", search room.',end='\n\n')
+    print('"i", show inventory.',end='\n\n')
     #random damage number
     randomNum = random.randint(1,101)
     #print room name and description
@@ -109,12 +110,41 @@ while not exit:
     if movement.lower() == 'e':
         os.system('cls||clear')
         #check if items have been picked up
+        done = 0
         if room[char.currentRoom()].roomItems():
-            for x in room[char.currentRoom()].roomItems():
-                #add item to inventory
-                print('added to your inventory',x.itemName(),x.itemDesc())
-                char.addItems(x)
-            room[char.currentRoom()].removeItems()
+            while not done:
+                print('press "o" to exit item pick up',end='\n\n')
+                #print all items in room
+                for x in room[char.currentRoom()].roomItems():
+                    print('item in room:', x.itemName(),end='\n\n')
+                pickup = input('What item would you like to pickup [get] [item] : ')
+                #any item picked up?
+                pickedup = 0
+                for x in room[char.currentRoom()].roomItems():
+                    pickSplit = pickup.split(' ')
+                    pickSplitItem = " ".join(pickSplit[1:])
+                    #add item to inventory
+                    if pickSplit[0].lower() == 'get':
+                        if pickSplitItem.lower() == x.itemName().lower():
+                            pickedup = 1
+                            os.system('cls||clear')
+                            print('added to your inventory',x.itemName(),x.itemDesc())
+                            char.addItems(x)
+                            room[char.currentRoom()].removeItem(x)
+                    elif not pickSplit[0].lower() == 'o':
+                        os.system('cls||clear')
+                        print('please use [get] [item] syntax',end='\n\n')
+                        break
+                #exit
+                if pickup.lower() == 'o':
+                    done = 1
+                    os.system('cls||clear')
+                if not room[char.currentRoom()].roomItems():
+                    done = 1
+                    os.system('cls||clear')
+                if not pickedup and not done:
+                    print('item name doesnt exists',end='\n\n')
+
         else:
             #if room is empty tell the player
             print('room is empty')
@@ -123,14 +153,56 @@ while not exit:
         os.system('cls||clear')
         #get player items
         if char.playerItems():
-            for x in char.playerItems():
-                #check item type for output
-                if x.itemType() == 'weapon':
-                    print('item in your inventory','name:',x.itemName(),
-                    'desc:',x.itemDesc(),"damage:",x.itemDamage())
-                if x.itemType() == 'potion':
-                    print('item in your inventory','name:',x.itemName(),
-                    'desc:',x.itemDesc(),"effect:",x.itemEffect())
+            done = 0
+            while not done:
+                action = input('press e to look at inventory, press d to drop items in inventory : ')
+                if action.lower() == 'e':
+                    done = 1
+                    for x in char.playerItems():
+                    #check item type for output
+                        if x.itemType() == 'weapon':
+                            print('item in your inventory','name:',x.itemName(),
+                            'desc:',x.itemDesc(),"damage:",x.itemDamage())
+                        if x.itemType() == 'potion':
+                            print('item in your inventory','name:',x.itemName(),
+                            'desc:',x.itemDesc(),"effect:",x.itemEffect())
+                #go to drop menu
+                if action.lower() == 'd':
+                    while not done:
+                        #list items in inventory
+                        for x in char.playerItems():
+                            print('item in inventory:', x.itemName(),end='\n\n')
+                        print("press 'o' to exit inventory dropping",end='\n\n')
+                        action = input('What item would you like to drop [drop] [item] : ')
+                        dropped = 0
+                        print(action)
+                        #if o exit
+                        if not action.lower() == 'o':
+                            #get items
+                            for x in char.playerItems():
+                                dropSplit = action.split(' ')
+                                dropSplitItem = " ".join(dropSplit[1:])
+                                #drop item from inventory
+                                if dropSplit[0].lower() == 'drop':
+                                    print(dropSplitItem.lower())
+                                    print(x.itemName().lower())
+                                    if dropSplitItem.lower() == x.itemName().lower():
+                                        dropped = 1
+                                        os.system('cls||clear')
+                                        print('dropped from your inventory',x.itemName(),x.itemDesc())
+                                        char.dropItem(x)
+                                #incorrect syntax
+                                else:
+                                    os.system('cls||clear')
+                                    print('please use [drop] [item] syntax',end='\n\n')
+                                    break
+                        if action.lower() == 'o':
+                            done = 1
+                            os.system('cls||clear')
+                        if not dropped and not done:
+                            os.system('cls||clear')
+                            print('item name doesnt exists',end='\n\n')
+
         else:
             #if inv empty tell the player
             print('inventory empty')

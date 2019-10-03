@@ -17,6 +17,6 @@ class Room:
         return self.map
     def roomItems(self):
         return self.items
-    def removeItems(self):
-        self.items = []
+    def removeItem(self,x):
+        self.items.remove(x)
         return self.items

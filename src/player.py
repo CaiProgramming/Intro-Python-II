@@ -15,5 +15,7 @@ class Player:
         self.items.append(item)
     def playerItems(self):
         return self.items
+    def dropItem(self,x):
+        self.items.remove(x)
     def __str__(self):
         return 'Name: ' + self.name + ' Age: ' + self.age + ' Sex: ' + self.sex
